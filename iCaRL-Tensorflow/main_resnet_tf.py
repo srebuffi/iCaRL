@@ -188,6 +188,7 @@ for itera in range(nb_groups):
     
     # Load the training samples of the current batch of classes in the feature space to apply the herding algorithm
     Dtot,processed_files,label_dico = utils_icarl.load_class_in_feature_space(files_from_cl, batch_size, scores, label_batch, loss_class, file_string_batch, op_feature_map, sess)
+    processed_files = np.array([x.decode() for x in processed_files])
     
     # Herding procedure : ranking of the potential exemplars
     print('Exemplars selection starting ...')
@@ -221,6 +222,7 @@ for itera in range(nb_groups):
           void2   = sess.run(inits)
           
           Dtot,processed_files,label_dico = utils_icarl.load_class_in_feature_space(files_from_cl, batch_size, scores, label_batch, loss_class, file_string_batch, op_feature_map, sess)
+          processed_files = np.array([x.decode() for x in processed_files])
           
           for iter_dico in range(nb_cl):
               ind_cl     = np.where(label_dico == order[iter_dico+iteration2*nb_cl])[0]
