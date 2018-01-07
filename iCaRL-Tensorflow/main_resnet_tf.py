@@ -67,12 +67,12 @@ files_train, files_valid = utils_data.prepare_files(train_path, mixing, order, l
 
 # Pickle order and files lists and mixing
 with open(str(nb_cl)+'mixing.pickle','wb') as fp:
-    cPickle.dump(mixing,fp,protocol=2)
+    cPickle.dump(mixing,fp)
 
 with open(str(nb_cl)+'settings_resnet.pickle','wb') as fp:
-    cPickle.dump(order,fp,protocol=2)
-    cPickle.dump(files_valid,fp,protocol=2)
-    cPickle.dump(files_train,fp,protocol=2)
+    cPickle.dump(order,fp)
+    cPickle.dump(files_valid,fp)
+    cPickle.dump(files_train,fp)
 
 
 ### Start of the main algorithm ###
@@ -249,8 +249,8 @@ for itera in range(nb_groups):
   
   # Pickle class means and protoset
   with open(str(nb_cl)+'class_means.pickle','wb') as fp:
-      cPickle.dump(class_means,fp,protocol=2)
+      cPickle.dump(class_means,fp)
   with open(str(nb_cl)+'files_protoset.pickle','wb') as fp:
-      cPickle.dump(files_protoset,fp,protocol=2)
+      cPickle.dump(files_protoset,fp)
 
 

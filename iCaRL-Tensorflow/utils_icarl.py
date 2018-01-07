@@ -23,7 +23,7 @@ def reading_data_and_preparing_network(files_from_cl, gpu, itera, batch_size, tr
     loss_class = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=label_batch_one_hot, logits=scores))
     
     ### Initilization
-    params = dict(cPickle.load(open(save_path+'model-iteration'+str(nb_cl)+'-%i.pickle' % itera)))
+    params = dict(cPickle.load(open(save_path+'model-iteration'+str(nb_cl)+'-%i.pickle' % itera)), 'rb')
     inits  = utils_resnet.get_weight_initializer(params)
     
     return inits,scores,label_batch,loss_class,file_string_batch,op_feature_map

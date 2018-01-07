@@ -172,4 +172,4 @@ def save_model(name, scope, sess):
     variables = tf.get_collection(tf.GraphKeys.WEIGHTS, scope=scope)
     d = [(v.name.split(':')[0], sess.run(v)) for v in variables]
     
-    cPickle.dump(d, open(name, 'w'), protocol=2)
+    cPickle.dump(d, open(name, 'wb'))
