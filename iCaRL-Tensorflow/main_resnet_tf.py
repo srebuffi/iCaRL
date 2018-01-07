@@ -51,12 +51,15 @@ for _ in range(nb_groups*nb_cl):
 # Random mixing
 print("Mixing the classes and putting them in batches of classes...")
 np.random.seed(1993)
-order  = np.arange(1000)
-mixing = np.arange(1000)
+order  = np.arange(nb_groups * nb_cl)
+mixing = np.arange(nb_groups * nb_cl)
 np.random.shuffle(mixing)
 
 # Loading the labels
 labels_dic, label_names, validation_ground_truth = utils_data.parse_devkit_meta(devkit_path)
+# Or you can just do like this
+# define_class = ['apple', 'banana', 'cat', 'dog', 'elephant', 'forg']
+# labels_dic = {k: v for v, k in enumerate(define_class)}
 
 # Preparing the files per group of classes
 print("Creating a validation set ...")
