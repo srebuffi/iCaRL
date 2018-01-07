@@ -3,11 +3,14 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 import numpy as np
 import scipy
-import cPickle
 import os
 from scipy.spatial.distance import cdist
 import scipy.io
 import sys
+try:
+    import cPickle
+except:
+    import _pickle as cPickle
 # Syspath for the folder with the utils files
 #sys.path.insert(0, "/data/sylvestre")
 

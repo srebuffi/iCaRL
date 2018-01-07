@@ -1,9 +1,12 @@
 import tensorflow as tf
 import numpy as np
-import cPickle
 import os
 import scipy.io
 import sys
+try:
+    import cPickle
+except:
+    import _pickle as cPickle
 
 def parse_devkit_meta(devkit_path):
     meta_mat                = scipy.io.loadmat(devkit_path+'/meta.mat')

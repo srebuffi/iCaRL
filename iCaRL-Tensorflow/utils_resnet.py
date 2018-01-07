@@ -1,6 +1,9 @@
 import tensorflow as tf
 import numpy as np
-import cPickle
+try:
+    import cPickle
+except:
+    import _pickle as cPickle
 
 
 def relu(x, name, alpha):
