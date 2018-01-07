@@ -93,7 +93,10 @@ for itera in range(nb_groups):
             stat_hb1     += ([ll in best for ll, best in zip(l, np.argsort(sc, axis=1)[:, -top:])])
             stat_icarl   += ([ll in best for ll, best in zip(l, np.argsort(sqd_icarl, axis=1)[:, -top:])])
             stat_ncm     += ([ll in best for ll, best in zip(l, np.argsort(sqd_ncm, axis=1)[:, -top:])])
-    
+
+        coord.request_stop()
+        coord.join(threads)
+
     print('Increment: %i' %itera)
     print('Hybrid 1 top '+str(top)+' accuracy: %f' %np.average(stat_hb1))
     print('iCaRL top '+str(top)+' accuracy: %f' %np.average(stat_icarl))

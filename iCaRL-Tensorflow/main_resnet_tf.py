@@ -174,7 +174,10 @@ for itera in range(nb_groups):
         # Decrease the learning by 5 every 10 epoch after 20 epochs at the first learning rate
         if epoch in lr_strat:
             lr /= lr_factor
-    
+
+    coord.request_stop()
+    coord.join(threads)
+
     # copy weights to store network
     save_weights = sess.run([variables_graph[i] for i in range(len(variables_graph))])
     utils_resnet.save_model(save_path+'model-iteration'+str(nb_cl)+'-%i.pickle' % itera, scope='ResNet18', sess=sess)
@@ -212,7 +215,10 @@ for itera in range(nb_groups):
             step_t  += 1
             if files_iter[ind_max] not in files_protoset[itera*nb_cl+iter_dico]:
               files_protoset[itera*nb_cl+iter_dico].append(files_iter[ind_max])
-  
+
+    coord.request_stop()
+    coord.join(threads)
+
   # Reset the graph
   tf.reset_default_graph()
   
@@ -246,7 +252,10 @@ for itera in range(nb_groups):
               D_tmp       = D[:,ind_herding]
               class_means[:,order[iteration2*nb_cl+iter_dico],0,itera] = np.mean(D_tmp,axis=1)
               class_means[:,order[iteration2*nb_cl+iter_dico],0,itera] /= np.linalg.norm(class_means[:,order[iteration2*nb_cl+iter_dico],0,itera])
-      
+
+          coord.request_stop()
+          coord.join(threads)
+
       # Reset the graph
       tf.reset_default_graph()
   
