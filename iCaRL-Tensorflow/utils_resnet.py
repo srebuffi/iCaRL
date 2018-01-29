@@ -1,6 +1,9 @@
 import tensorflow as tf
 import numpy as np
-import cPickle
+try:
+    import cPickle
+except:
+    import _pickle as cPickle
 
 
 def relu(x, name, alpha):
@@ -172,4 +175,4 @@ def save_model(name, scope, sess):
     variables = tf.get_collection(tf.GraphKeys.WEIGHTS, scope=scope)
     d = [(v.name.split(':')[0], sess.run(v)) for v in variables]
     
-    cPickle.dump(d, open(name, 'w'), protocol=2)
+    cPickle.dump(d, open(name, 'wb'))

@@ -1,11 +1,14 @@
 import tensorflow as tf
 import numpy as np
-import cPickle
 import os
 import scipy.io
 import sys
 import utils_data
 import utils_resnet
+try:
+    import cPickle
+except:
+    import _pickle as cPickle
 
 def reading_data_and_preparing_network(files_from_cl, gpu, itera, batch_size, train_path, labels_dic, mixing, nb_groups, nb_cl, save_path):
     image_train, label_train,file_string       = utils_data.read_data_test(train_path,labels_dic, mixing,files_from_cl=files_from_cl)
@@ -23,7 +26,7 @@ def reading_data_and_preparing_network(files_from_cl, gpu, itera, batch_size, tr
     loss_class = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=label_batch_one_hot, logits=scores))
     
     ### Initilization
-    params = dict(cPickle.load(open(save_path+'model-iteration'+str(nb_cl)+'-%i.pickle' % itera)))
+    params = dict(cPickle.load(open(save_path+'model-iteration'+str(nb_cl)+'-%i.pickle' % itera)), 'rb')
     inits  = utils_resnet.get_weight_initializer(params)
     
     return inits,scores,label_batch,loss_class,file_string_batch,op_feature_map

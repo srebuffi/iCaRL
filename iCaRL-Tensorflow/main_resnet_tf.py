@@ -3,10 +3,13 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 import numpy as np
 import scipy
-import cPickle
 import os
 import scipy.io
 import sys
+try:
+    import cPickle
+except:
+    import _pickle as cPickle
 # Syspath for the folder with the utils files
 #sys.path.insert(0, "/media/data/srebuffi")
 
@@ -51,12 +54,15 @@ for _ in range(nb_groups*nb_cl):
 # Random mixing
 print("Mixing the classes and putting them in batches of classes...")
 np.random.seed(1993)
-order  = np.arange(1000)
-mixing = np.arange(1000)
+order  = np.arange(nb_groups * nb_cl)
+mixing = np.arange(nb_groups * nb_cl)
 np.random.shuffle(mixing)
 
 # Loading the labels
 labels_dic, label_names, validation_ground_truth = utils_data.parse_devkit_meta(devkit_path)
+# Or you can just do like this
+# define_class = ['apple', 'banana', 'cat', 'dog', 'elephant', 'forg']
+# labels_dic = {k: v for v, k in enumerate(define_class)}
 
 # Preparing the files per group of classes
 print("Creating a validation set ...")
@@ -64,12 +70,12 @@ files_train, files_valid = utils_data.prepare_files(train_path, mixing, order, l
 
 # Pickle order and files lists and mixing
 with open(str(nb_cl)+'mixing.pickle','wb') as fp:
-    cPickle.dump(mixing,fp,protocol=2)
+    cPickle.dump(mixing,fp)
 
 with open(str(nb_cl)+'settings_resnet.pickle','wb') as fp:
-    cPickle.dump(order,fp,protocol=2)
-    cPickle.dump(files_valid,fp,protocol=2)
-    cPickle.dump(files_train,fp,protocol=2)
+    cPickle.dump(order,fp)
+    cPickle.dump(files_valid,fp)
+    cPickle.dump(files_train,fp)
 
 
 ### Start of the main algorithm ###
@@ -168,7 +174,10 @@ for itera in range(nb_groups):
         # Decrease the learning by 5 every 10 epoch after 20 epochs at the first learning rate
         if epoch in lr_strat:
             lr /= lr_factor
-    
+
+    coord.request_stop()
+    coord.join(threads)
+
     # copy weights to store network
     save_weights = sess.run([variables_graph[i] for i in range(len(variables_graph))])
     utils_resnet.save_model(save_path+'model-iteration'+str(nb_cl)+'-%i.pickle' % itera, scope='ResNet18', sess=sess)
@@ -188,6 +197,7 @@ for itera in range(nb_groups):
     
     # Load the training samples of the current batch of classes in the feature space to apply the herding algorithm
     Dtot,processed_files,label_dico = utils_icarl.load_class_in_feature_space(files_from_cl, batch_size, scores, label_batch, loss_class, file_string_batch, op_feature_map, sess)
+    processed_files = np.array([x.decode() for x in processed_files])
     
     # Herding procedure : ranking of the potential exemplars
     print('Exemplars selection starting ...')
@@ -205,7 +215,10 @@ for itera in range(nb_groups):
             step_t  += 1
             if files_iter[ind_max] not in files_protoset[itera*nb_cl+iter_dico]:
               files_protoset[itera*nb_cl+iter_dico].append(files_iter[ind_max])
-  
+
+    coord.request_stop()
+    coord.join(threads)
+
   # Reset the graph
   tf.reset_default_graph()
   
@@ -221,6 +234,7 @@ for itera in range(nb_groups):
           void2   = sess.run(inits)
           
           Dtot,processed_files,label_dico = utils_icarl.load_class_in_feature_space(files_from_cl, batch_size, scores, label_batch, loss_class, file_string_batch, op_feature_map, sess)
+          processed_files = np.array([x.decode() for x in processed_files])
           
           for iter_dico in range(nb_cl):
               ind_cl     = np.where(label_dico == order[iter_dico+iteration2*nb_cl])[0]
@@ -238,14 +252,17 @@ for itera in range(nb_groups):
               D_tmp       = D[:,ind_herding]
               class_means[:,order[iteration2*nb_cl+iter_dico],0,itera] = np.mean(D_tmp,axis=1)
               class_means[:,order[iteration2*nb_cl+iter_dico],0,itera] /= np.linalg.norm(class_means[:,order[iteration2*nb_cl+iter_dico],0,itera])
-      
+
+          coord.request_stop()
+          coord.join(threads)
+
       # Reset the graph
       tf.reset_default_graph()
   
   # Pickle class means and protoset
   with open(str(nb_cl)+'class_means.pickle','wb') as fp:
-      cPickle.dump(class_means,fp,protocol=2)
+      cPickle.dump(class_means,fp)
   with open(str(nb_cl)+'files_protoset.pickle','wb') as fp:
-      cPickle.dump(files_protoset,fp,protocol=2)
+      cPickle.dump(files_protoset,fp)
 
 

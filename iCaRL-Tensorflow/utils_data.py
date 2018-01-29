@@ -1,9 +1,12 @@
 import tensorflow as tf
 import numpy as np
-import cPickle
 import os
 import scipy.io
 import sys
+try:
+    import cPickle
+except:
+    import _pickle as cPickle
 
 def parse_devkit_meta(devkit_path):
     meta_mat                = scipy.io.loadmat(devkit_path+'/meta.mat')
@@ -19,13 +22,8 @@ def parse_devkit_meta(devkit_path):
 def read_data(prefix, labels_dic, mixing, files_from_cl):
     image_list = sorted(map(lambda x: os.path.join(prefix, x),
                         filter(lambda x: x.endswith('JPEG'), files_from_cl)))
-    prefix2 = []
-    
-    for file_i in image_list:
-        tmp = file_i.split(prefix+'/')[1].split("_")[0]
-        prefix2.append(tmp)
-    
-    prefix2     = np.array(prefix2)
+
+    prefix2     = np.array([file_i.split(prefix + '/')[1].split("_")[0] for file_i in image_list])
     labels_list = np.array([mixing[labels_dic[i]] for i in prefix2])
     
     assert(len(image_list) == len(labels_list))
@@ -43,16 +41,9 @@ def read_data(prefix, labels_dic, mixing, files_from_cl):
 def read_data_test(prefix,labels_dic, mixing, files_from_cl):
     image_list = sorted(map(lambda x: os.path.join(prefix, x),
                         filter(lambda x: x.endswith('JPEG'), files_from_cl)))
-    prefix2=[]
-    files_list=[]
     
-    for file_i in image_list:
-        tmp = file_i.split(prefix+'/')[1].split("_")[0]
-        prefix2.append(tmp)
-        tmp = file_i.split(prefix+'/')[1]
-        files_list.append(tmp)
-    
-    prefix2     = np.array(prefix2)
+    prefix2 = np.array([file_i.split(prefix + '/')[1].split("_")[0] for file_i in image_list])
+    files_list = [file_i.split(prefix + '/')[1] for file_i in image_list]
     labels_list = np.array([mixing[labels_dic[i]] for i in prefix2])
     
     assert(len(image_list) == len(labels_list))
@@ -69,14 +60,9 @@ def read_data_test(prefix,labels_dic, mixing, files_from_cl):
 
 def prepare_files(train_path, mixing, order, labels_dic, nb_groups, nb_cl, nb_val):
     files=os.listdir(train_path)
-    prefix=[]
     
-    for file_i in files:
-        tmp = file_i.split("_")[0]
-        prefix.append(tmp)
-    
-    prefix = np.array(prefix)
-    labels_old=np.array([mixing[labels_dic[i]] for i in prefix])
+    prefix = np.array([file_i.split("_")[0] for file_i in files])
+    labels_old = np.array([mixing[labels_dic[i]] for i in prefix])
     
     files_train = []
     files_valid = []

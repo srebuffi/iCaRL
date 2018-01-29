@@ -3,11 +3,14 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 import numpy as np
 import scipy
-import cPickle
 import os
 from scipy.spatial.distance import cdist
 import scipy.io
 import sys
+try:
+    import cPickle
+except:
+    import _pickle as cPickle
 # Syspath for the folder with the utils files
 #sys.path.insert(0, "/data/sylvestre")
 
@@ -90,7 +93,10 @@ for itera in range(nb_groups):
             stat_hb1     += ([ll in best for ll, best in zip(l, np.argsort(sc, axis=1)[:, -top:])])
             stat_icarl   += ([ll in best for ll, best in zip(l, np.argsort(sqd_icarl, axis=1)[:, -top:])])
             stat_ncm     += ([ll in best for ll, best in zip(l, np.argsort(sqd_ncm, axis=1)[:, -top:])])
-    
+
+        coord.request_stop()
+        coord.join(threads)
+
     print('Increment: %i' %itera)
     print('Hybrid 1 top '+str(top)+' accuracy: %f' %np.average(stat_hb1))
     print('iCaRL top '+str(top)+' accuracy: %f' %np.average(stat_icarl))
