@@ -4,7 +4,7 @@ Tensorflow and Theano + Lasagne codes for the paper https://arxiv.org/abs/1611.0
 
 ## Disclaimer
 
-The code is now very out-dated and not supported by the current Tensorflow so this repo should be considered as an indication on how we coded iCaRL rather than a runnable code.
+**The code is now very out-dated and not supported by the current Tensorflow so this repo should be considered as an indication on how we coded iCaRL rather than a runnable code.**
 
 ## Abstract 
 
